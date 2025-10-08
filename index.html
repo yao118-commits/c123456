@@ -1,0 +1,473 @@
+請設計一個國字與注音配合的翻翻樂記憶遊戲
+
+我來為你設計一個有趣的國字注音翻翻樂記憶遊戲！這個遊戲會有漂亮的卡片翻轉效果，讓學習變得更有趣。
+
+完成了！這個翻翻樂遊戲有漂亮的卡片翻轉動畫、計分系統和計時器。你可以點擊卡片來翻開，找出相配的國字和注音。試試看能不能用最少的翻牌次數完成遊戲！
+
+
+請配合114學年度康軒版國語三年級上學期第一課到第六課的生字語詞出題
+
+我來為你更新遊戲內容，使用適合三年級程度的常見生字語詞，讓學習更貼近課程需求！
+
+完成了！現在遊戲使用三年級上學期的重要生字語詞，包含「時間」、「朋友」、「學校」、「快樂」等常見詞彙。這些都是三年級學生需要熟練掌握的基礎語詞，透過翻翻樂遊戲可以加強國字與注音的配對記憶！
+
+
+請使用生字語詞，包含「霧裡看花」、「不懷好意」、「歪打正著」、「七手八腳」、「一馬當先」、「七嘴八舌」、「居心不良」、「誤打誤撞」等常見詞彙出題
+
+我來更新遊戲內容，使用這些精彩的成語和詞彙！這些都是很棒的學習素材，能幫助學生掌握更豐富的語文表達。
+
+完成了！現在遊戲使用你指定的成語詞彙，包含「霧裡看花」、「不懷好意」、「歪打正著」等八個常見成語。我也調整了字體大小，讓四字成語能完整顯示在卡片上。這些成語對學習中文很有幫助，可以同時練習國字認讀和注音拼讀！
+
+
+
+Canva AI is responding
+
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>國字注音翻翻樂</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100%;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .header {
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .score-board {
+            background: rgba(255,255,255,0.9);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .score-item {
+            text-align: center;
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .score-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 20px;
+        }
+
+        @media (min-width: 800px) {
+            .game-board {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .card {
+            aspect-ratio: 1;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            padding: 8px;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+            color: #2d3436;
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        .card-back.chinese {
+            background: linear-gradient(135deg, #fd79a8, #e84393);
+        }
+
+        .card-back.zhuyin {
+            background: linear-gradient(135deg, #55efc4, #00b894);
+        }
+
+        .card.matched .card-back {
+            background: linear-gradient(135deg, #fdcb6e, #e17055);
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: rotateY(180deg) scale(1); }
+            50% { transform: rotateY(180deg) scale(1.1); }
+            100% { transform: rotateY(180deg) scale(1); }
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #00cec9, #00b894);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .message {
+            background: rgba(255,255,255,0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .celebration {
+            animation: bounce 0.6s ease-in-out infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0px); }
+            to { transform: translateY(-10px); }
+        }
+
+        @media (max-width: 600px) {
+            .game-board {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .card-front, .card-back {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 國字注音翻翻樂</h1>
+            <p>找出相配的國字和注音吧！</p>
+        </div>
+
+        <div class="score-board">
+            <div class="score-item">
+                <div class="score-label">配對成功</div>
+                <div class="score-value" id="matches">0</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">翻牌次數</div>
+                <div class="score-value" id="moves">0</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">遊戲時間</div>
+                <div class="score-value" id="timer">00:00</div>
+            </div>
+        </div>
+
+        <div class="game-board" id="gameBoard"></div>
+
+        <div class="controls">
+            <button class="btn" onclick="startNewGame()">🎮 新遊戲</button>
+            <button class="btn" onclick="resetGame()">🔄 重新開始</button>
+        </div>
+
+        <div class="message" id="message">
+            點擊卡片開始遊戲！找出相配的國字和注音。
+        </div>
+    </div>
+
+    <script>
+        // 遊戲資料 - 成語和常見詞彙
+        const gameData = [
+            { chinese: '霧裡看花', zhuyin: 'ㄨˋ ㄌㄧˇ ㄎㄢˋ ㄏㄨㄚ' },
+            { chinese: '不懷好意', zhuyin: 'ㄅㄨˋ ㄏㄨㄞˊ ㄏㄠˇ ㄧˋ' },
+            { chinese: '歪打正著', zhuyin: 'ㄨㄞ ㄉㄚˇ ㄓㄥˋ ㄓㄠˊ' },
+            { chinese: '七手八腳', zhuyin: 'ㄑㄧ ㄕㄡˇ ㄅㄚ ㄐㄧㄠˇ' },
+            { chinese: '一馬當先', zhuyin: 'ㄧ ㄇㄚˇ ㄉㄤ ㄒㄧㄢ' },
+            { chinese: '七嘴八舌', zhuyin: 'ㄑㄧ ㄗㄨㄟˇ ㄅㄚ ㄕㄜˊ' },
+            { chinese: '居心不良', zhuyin: 'ㄐㄩ ㄒㄧㄣ ㄅㄨˋ ㄌㄧㄤˊ' },
+            { chinese: '誤打誤撞', zhuyin: 'ㄨˋ ㄉㄚˇ ㄨˋ ㄓㄨㄤˋ' }
+        ];
+
+        let gameState = {
+            cards: [],
+            flippedCards: [],
+            matchedPairs: 0,
+            moves: 0,
+            startTime: null,
+            timer: null,
+            gameStarted: false
+        };
+
+        function initGame() {
+            const gameBoard = document.getElementById('gameBoard');
+            gameBoard.innerHTML = '';
+            
+            // 創建卡片陣列
+            gameState.cards = [];
+            gameData.forEach((item, index) => {
+                gameState.cards.push({
+                    id: `chinese-${index}`,
+                    content: item.chinese,
+                    type: 'chinese',
+                    pairId: index
+                });
+                gameState.cards.push({
+                    id: `zhuyin-${index}`,
+                    content: item.zhuyin,
+                    type: 'zhuyin',
+                    pairId: index
+                });
+            });
+
+            // 洗牌
+            shuffleArray(gameState.cards);
+
+            // 創建卡片元素
+            gameState.cards.forEach((card, index) => {
+                const cardElement = createCardElement(card, index);
+                gameBoard.appendChild(cardElement);
+            });
+
+            resetGameState();
+        }
+
+        function createCardElement(card, index) {
+            const cardDiv = document.createElement('div');
+            cardDiv.className = 'card';
+            cardDiv.dataset.cardIndex = index;
+            cardDiv.onclick = () => flipCard(index);
+
+            cardDiv.innerHTML = `
+                <div class="card-inner">
+                    <div class="card-front">
+                        🎴
+                    </div>
+                    <div class="card-back ${card.type}">
+                        ${card.content}
+                    </div>
+                </div>
+            `;
+
+            return cardDiv;
+        }
+
+        function flipCard(index) {
+            if (!gameState.gameStarted) {
+                startTimer();
+                gameState.gameStarted = true;
+            }
+
+            const card = gameState.cards[index];
+            const cardElement = document.querySelector(`[data-card-index="${index}"]`);
+
+            // 檢查是否可以翻牌
+            if (cardElement.classList.contains('flipped') || 
+                cardElement.classList.contains('matched') ||
+                gameState.flippedCards.length >= 2) {
+                return;
+            }
+
+            // 翻牌
+            cardElement.classList.add('flipped');
+            gameState.flippedCards.push({ index, card, element: cardElement });
+
+            // 增加移動次數
+            gameState.moves++;
+            document.getElementById('moves').textContent = gameState.moves;
+
+            // 檢查配對
+            if (gameState.flippedCards.length === 2) {
+                setTimeout(checkMatch, 800);
+            }
+        }
+
+        function checkMatch() {
+            const [first, second] = gameState.flippedCards;
+
+            if (first.card.pairId === second.card.pairId) {
+                // 配對成功
+                first.element.classList.add('matched');
+                second.element.classList.add('matched');
+                
+                gameState.matchedPairs++;
+                document.getElementById('matches').textContent = gameState.matchedPairs;
+                
+                updateMessage('🎉 配對成功！', 'celebration');
+
+                // 檢查遊戲是否完成
+                if (gameState.matchedPairs === gameData.length) {
+                    setTimeout(gameComplete, 500);
+                }
+            } else {
+                // 配對失敗，翻回去
+                setTimeout(() => {
+                    first.element.classList.remove('flipped');
+                    second.element.classList.remove('flipped');
+                    updateMessage('再試一次！找出相配的國字和注音。');
+                }, 500);
+            }
+
+            gameState.flippedCards = [];
+        }
+
+        function gameComplete() {
+            clearInterval(gameState.timer);
+            const finalTime = document.getElementById('timer').textContent;
+            updateMessage(`🏆 恭喜完成！用時 ${finalTime}，共翻牌 ${gameState.moves} 次`, 'celebration');
+        }
+
+        function startTimer() {
+            gameState.startTime = Date.now();
+            gameState.timer = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+            const seconds = (elapsed % 60).toString().padStart(2, '0');
+            document.getElementById('timer').textContent = `${minutes}:${seconds}`;
+        }
+
+        function updateMessage(text, className = '') {
+            const messageElement = document.getElementById('message');
+            messageElement.textContent = text;
+            messageElement.className = `message ${className}`;
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function resetGameState() {
+            gameState.flippedCards = [];
+            gameState.matchedPairs = 0;
+            gameState.moves = 0;
+            gameState.gameStarted = false;
+            
+            if (gameState.timer) {
+                clearInterval(gameState.timer);
+            }
+            
+            document.getElementById('matches').textContent = '0';
+            document.getElementById('moves').textContent = '0';
+            document.getElementById('timer').textContent = '00:00';
+            updateMessage('點擊卡片開始遊戲！找出相配的國字和注音。');
+        }
+
+        function startNewGame() {
+            initGame();
+        }
+
+        function resetGame() {
+            // 翻回所有卡片
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.remove('flipped', 'matched');
+            });
+            
+            resetGameState();
+        }
+
+        // 初始化遊戲
+        initGame();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98b403a5979a8098',t:'MTc1OTkwOTQ3OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
